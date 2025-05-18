@@ -11,6 +11,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { auth } from "~/server/auth";
 import SessionProvider from "./_components/SessionProvider";
 import theme from "~/styles/MantineTheme";
+import { SideNav } from "./_components/SideNav";
 
 export const metadata: Metadata = {
   title: "Smart Trader X",
@@ -36,8 +37,9 @@ export default async function RootLayout({
         <TRPCReactProvider>
           <MantineProvider theme={theme}>
             <SessionProvider session={session}>
-              <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#555555] to-[#ccffcc]">
+              <main className="flex max-h-screen flex-col bg-[#F1F6F9] text-main">
                 <div className="flex min-h-screen">
+                  <SideNav />
                   <div className="flex w-full flex-col items-center justify-center">
                     {children}
                   </div>
