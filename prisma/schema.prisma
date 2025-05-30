@@ -67,4 +67,17 @@ model User {
   storeId       Int?
   Session       Session[]
   Account       Account[]
+
+  // Profile fields
+  nickName         String?
+  gender           String?
+  country          String?
+  language         String?
+  timeZone         String?
+  preferredAsset   String?
+  riskTolerance    String?
+  tradingFrequency String?
+  experienceLevel  String?
+  image            String?
+  additionalEmails String[]
 }
