@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { randomInt } from "crypto";
 
 const prisma = new PrismaClient();
 

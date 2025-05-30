@@ -1,10 +1,10 @@
 import { HydrateClient } from "~/trpc/server";
-import { Authentication } from "./_components/Authentication";
+import { Landing } from "./_components/Landing";
 
 export default function Home() {
   return (
     <HydrateClient>
-      <Authentication />
+      <Landing />
     </HydrateClient>
   );
 }

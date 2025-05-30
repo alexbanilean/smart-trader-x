@@ -80,11 +80,11 @@ export const DashboardGrid: React.FC = () => {
     >
         {boxIndices.map(index => (
             <div
+            key={index}
             draggable="true"
             className="h-[40px] w-[40px] hover:cursor-grab active:cursor-grabbing"
             onDragStart={dragStartEvent}
             onDrag={dragEvent}
-            key={index}
             >
                 {index}
             </div>
