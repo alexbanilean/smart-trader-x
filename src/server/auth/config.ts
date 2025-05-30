@@ -23,10 +23,12 @@ declare module "next-auth" {
       // ...other properties
       role: Role;
     } & DefaultSession["user"];
+    rememberMe?: boolean;
   }
 
   interface User {
     role: Role;
+    rememberMe?: boolean;
   }
 }
 
@@ -48,6 +50,7 @@ declare module "next-auth/jwt" {
     userEmail: string;
     userEmailVerified: Date | null;
     userRole: Role;
+    rememberMe?: boolean;
   }
 }
 
@@ -66,43 +69,52 @@ export const authConfig = {
           placeholder: "example@gmail.com",
         },
         password: { label: "Password", type: "password" },
+        rememberMe: { label: "Remember Me", type: "boolean" },
       },
       authorize: async (credentials) => {
         const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(4) })
+          .object({
+            email: z.string().email(),
+            password: z.string().min(4),
+            rememberMe: z.union([
+              z.boolean(),
+              z.string().transform((val) => val === "true"),
+              z.undefined().transform(() => false),
+            ]),
+          })
           .safeParse(credentials);
 
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-
-          const user = await db.user.findUnique({
-            where: { email: email },
-          });
-
-          if (!user) {
-            return null;
-          }
-
-          console.log("COMPARE PASSWORDS:", password, user.password);
-          const isValid = bcrypt.compareSync(password, user.password);
-          console.log("EQUAL", isValid);
-
-          if (!isValid) {
-            return null;
-          }
-
-          console.log("User authenticated", user);
-
-          return user;
+        if (!parsedCredentials.success) {
+          console.error("Invalid credentials", parsedCredentials.error);
+          return null;
         }
 
-        console.error("Invalid credentials", parsedCredentials.error);
-        return null;
+        const { email, password, rememberMe } = parsedCredentials.data;
+        const user = await db.user.findUnique({
+          where: { email },
+        });
+
+        if (!user) {
+          return null;
+        }
+
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) {
+          return null;
+        }
+
+        return {
+          ...user,
+          rememberMe: rememberMe ?? false,
+        };
       },
     }),
   ],
   adapter: PrismaAdapter(db),
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
     jwt: ({ token, user }: { token: JWT; user: any }) => {
       if (user) {
@@ -110,9 +122,16 @@ export const authConfig = {
         token.userEmail = user.email;
         token.userEmailVerified = user.emailVerified;
         token.userRole = user.role;
+        token.rememberMe = user.rememberMe;
       }
 
-      console.log("JWT", token);
+      // If rememberMe is true, extend the token expiration
+      if (token.rememberMe) {
+        token.exp = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30 days
+      } else {
+        // Default session duration (e.g., 24 hours)
+        token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
+      }
 
       return token;
     },
@@ -125,11 +144,13 @@ export const authConfig = {
           emailVerified: token.userEmailVerified,
           role: token.userRole,
         };
+        session.rememberMe = token.rememberMe;
       }
-
-      console.log("SESSION", session);
-
       return session;
     },
+  },
+  pages: {
+    signIn: "/",
+    error: "/",
   },
 } satisfies NextAuthConfig;

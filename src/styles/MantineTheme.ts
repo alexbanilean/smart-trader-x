@@ -164,6 +164,7 @@ const tailwindColors: Record<
 const theme: MantineThemeOverride = {
   colors: tailwindColors,
   primaryColor: "teal",
+  fontFamily: "Montserrat",
 };
 
 export default theme;
