@@ -1,6 +1,6 @@
 import { z } from "zod";
 import * as bcrypt from "bcrypt";
-import { Role } from "@prisma/client";
+import { ExperienceLevel, Role } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 
@@ -138,7 +138,7 @@ export const userRouter = createTRPCRouter({
         preferredAsset: z.string().optional(),
         riskTolerance: z.string().optional(),
         tradingFrequency: z.string().optional(),
-        experienceLevel: z.string().optional(),
+        experienceLevel: z.nativeEnum(ExperienceLevel),
         emails: z.array(z.string().email()).optional(),
       }),
     )
@@ -203,12 +203,12 @@ export const userRouter = createTRPCRouter({
 
       return { url: fileUrl };
     }),
-  
-    deleteProfilePhoto: protectedProcedure.mutation(async ({ ctx }) => {
-      await ctx.db.user.update({
-        where: { id: ctx.session.user.id },
-        data: { image: null },
-      });
-      return { success: true };
-    }),
+
+  deleteProfilePhoto: protectedProcedure.mutation(async ({ ctx }) => {
+    await ctx.db.user.update({
+      where: { id: ctx.session.user.id },
+      data: { image: null },
+    });
+    return { success: true };
+  }),
 });
