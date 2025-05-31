@@ -55,6 +55,12 @@ enum Role {
   CLIENT
 }
 
+enum ExperienceLevel {
+  BEGINNER
+  INTERMEDIATE
+  EXPERIENCED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -67,4 +73,56 @@ model User {
   storeId       Int?
   Session       Session[]
   Account       Account[]
+
+  // Profile fields
+  nickName         String?
+  gender           String?
+  country          String?
+  language         String?
+  timeZone         String?
+  preferredAsset   String?
+  riskTolerance    String?
+  tradingFrequency String?
+  experienceLevel  ExperienceLevel?
+  image            String?
+  additionalEmails String[]
+  Post             Post[]
+  Comment          Comment[]
+  Reaction         Reaction[]
+}
+
+model Post {
+  id             String          @id @default(cuid())
+  userId         String
+  user           User            @relation(fields: [userId], references: [id])
+  content        String
+  image          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  reactions      Reaction[]
+  comments       Comment[]
+  reactionsCount Int             @default(0)
+  commentsCount  Int             @default(0)
+  label          ExperienceLevel @default(BEGINNER)
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Reaction {
+  id     String @id @default(cuid())
+  postId String
+  userId String
+  type   String // e.g. like, smile, etc.
+  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, postId, type])
 }

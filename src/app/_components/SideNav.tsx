@@ -35,8 +35,8 @@ export const SideNav: React.FC = () => {
       name: "AI Assistant",
     },
     {
-      path: "social",
-      href: "/social",
+      path: "social-feed",
+      href: "/social-feed",
       img_path: "/social.svg",
       img_alt: "social",
       name: "Social Feed",
