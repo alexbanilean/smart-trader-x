@@ -7,6 +7,9 @@ async function main() {
   console.log("Clearing database...");
 
   // Clear existing data in the correct order to respect foreign key constraints
+  await prisma.dashboardMarkets.deleteMany();
+  await prisma.marketData.deleteMany();
+  await prisma.market.deleteMany();
   await prisma.reaction.deleteMany();
   await prisma.comment.deleteMany();
   await prisma.post.deleteMany();
@@ -221,6 +224,63 @@ async function main() {
         createdAt: new Date(Date.now() - 1000 * 60 * 8),
       },
     ],
+  });
+
+  const market1 = await prisma.market.create({
+    data: {
+      shortName: "ABC",
+      fullName: "Abidium Cidium",
+      tendency: +20.5
+    }
+  });
+
+  const market2 = await prisma.market.create({
+    data: {
+      shortName: "DEF",
+      fullName: "Daebunim Flabius",
+      tendency: -0.6
+    }
+  });
+
+  const market3 = await prisma.market.create({
+    data: {
+      shortName: "GHIJ",
+      fullName: "Ghandiam Ijelly",
+      tendency: -0.2
+    }
+  });
+
+  const market4 = await prisma.market.create({
+    data: {
+      shortName: "XYZ",
+      fullName: "Xylophone Zentium",
+      tendency: +28.6
+    }
+  });
+
+  await prisma.marketData.createMany({
+    data: [
+      { marketId: market1.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), value: -0.5 },
+      { marketId: market1.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4), value: 2.7 },
+      { marketId: market1.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), value: 8.3 },
+      { marketId: market1.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), value: 0.3 },
+      { marketId: market1.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1), value: 5.9 },
+      { marketId: market2.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), value: -2.6 },
+      { marketId: market2.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4), value: 2.7 },
+      { marketId: market2.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), value: 5.1 },
+      { marketId: market2.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), value: 10.2 },
+      { marketId: market2.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1), value: 4.6 },
+      { marketId: market3.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), value: 0.0 },
+      { marketId: market3.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4), value: -0.1 },
+      { marketId: market3.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), value: 0.2 },
+      { marketId: market3.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), value: 0.5 },
+      { marketId: market3.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1), value: 0.3 },
+      { marketId: market4.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), value: 0.6 },
+      { marketId: market4.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4), value: -10.2 },
+      { marketId: market4.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), value: -5.7 },
+      { marketId: market4.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), value: 2.6 },
+      { marketId: market4.id, date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1), value: 15.2 }
+    ]
   });
 
   console.log("Admin:", admin);

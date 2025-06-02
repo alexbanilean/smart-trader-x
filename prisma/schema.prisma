@@ -89,6 +89,7 @@ model User {
   Post             Post[]
   Comment          Comment[]
   Reaction         Reaction[]
+  dashboardMarkets DashboardMarkets[]
 }
 
 model Post {
@@ -125,4 +126,35 @@ model Reaction {
   user   User   @relation(fields: [userId], references: [id])
 
   @@unique([userId, postId, type])
+}
+
+model Market {
+  id               String             @id @default(cuid())
+  shortName        String
+  fullName         String
+  tendency         Float
+  dashboardMarkets DashboardMarkets[]
+  marketData       MarketData[]
+}
+
+model MarketData {
+  id       String   @id @default(cuid())
+  marketId String
+  date     DateTime @default(now())
+  value    Float
+  market   Market   @relation(fields: [marketId], references: [id])
+
+  @@unique([marketId, date])
+}
+
+model DashboardMarkets {
+  id       String @id @default(cuid())
+  userId   String
+  marketId String
+  index    Int
+  user     User   @relation(fields: [userId], references: [id])
+  market   Market @relation(fields: [marketId], references: [id])
+
+  @@unique([userId, marketId])
+  @@unique([userId, index])
 }
