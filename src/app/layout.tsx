@@ -37,7 +37,7 @@ export default async function RootLayout({
         <TRPCReactProvider>
           <MantineProvider theme={theme}>
             <SessionProvider session={session}>
-              <main className="flex max-h-screen flex-col bg-[#F1F6F9] text-main">
+              <main className="text-main flex flex-col bg-[#F1F6F9]">
                 <div className="flex min-h-screen">
                   <SideNav />
                   <div className="flex w-full flex-col items-center justify-center">
