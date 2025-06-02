@@ -20,19 +20,19 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ onUpdateMarkets, o
             setProcItems(markets.map(market => market.market));
             onUpdateMarkets(markets.map(market => market.market.id));
         }
-    }, [markets]);
+    }, [markets, onUpdateMarkets]);
 
     const updateDashboard = api.market.updateMarketsInDashboard.useMutation({
-        onSuccess: () => {
-            utils.market.getDashboard.invalidate();
+        onSuccess: async () => {
+            await utils.market.getDashboard.invalidate();
         }
     });
 
     const dragStartEvent: DragEventHandler<HTMLDivElement> = (event) => {
         if (grid.current === null) { return; }
 
-        const gridX = grid.current.offsetLeft;
-        const gridY = grid.current.offsetTop - grid.current.scrollTop;
+        const gridX = grid.current.getBoundingClientRect().left;
+        const gridY = grid.current.getBoundingClientRect().top - grid.current.scrollTop;
 
         const gridWidth = grid.current.offsetWidth;
         const gridHeight = grid.current.scrollHeight;
@@ -44,10 +44,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ onUpdateMarkets, o
         const gridSizeY = Math.round((gridHeight + 16.0) / (boxHeight + 16.0));
         const lastSizeX = grid.current.children.length % gridSizeX;
         const lastGap = lastSizeX > 1 ? Math.round((gridWidth - lastSizeX * boxWidth) / (lastSizeX - 1)) : 0;
-        console.log(gridSizeX, gridSizeY);
 
         const boxCenterX = event.currentTarget.offsetLeft + boxWidth / 2.0;
-        const boxCenterY = event.currentTarget.offsetTop - grid.current!.scrollTop + boxHeight / 2.0;
+        const boxCenterY = event.currentTarget.offsetTop - grid.current.scrollTop + boxHeight / 2.0;
 
         const boxIndexY = Math.floor((boxCenterY - gridY + 16.0) / (boxHeight + 16.0));
         const boxIndexX = (
@@ -62,8 +61,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ onUpdateMarkets, o
     const dragEvent: DragEventHandler<HTMLDivElement> = (event) => {
         if (grid.current === null) { return; }
 
-        const gridX = grid.current.offsetLeft;
-        const gridY = grid.current.offsetTop - grid.current.scrollTop;
+        const gridX = grid.current.getBoundingClientRect().left;
+        const gridY = grid.current.getBoundingClientRect().top - grid.current.scrollTop;
 
         const gridWidth = grid.current.offsetWidth;
         const gridHeight = grid.current.scrollHeight;

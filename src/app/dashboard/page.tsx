@@ -4,7 +4,7 @@ import { DashboardSearchbar } from "../_components/Dashboard/DashboardSearchbar"
 import { DashboardGrid } from "../_components/Dashboard/DashboardGrid";
 import { Stack } from "@mantine/core";
 import { api } from "~/trpc/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DashboardModal } from "../_components/Dashboard/DashboardModal";
 
 export default function Dashboard() {
