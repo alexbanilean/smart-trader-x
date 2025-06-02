@@ -66,4 +66,4 @@ docker run -d \
 # 3. Exit: \q
 
 # To stop the database:
-# 1. Stop the container: docker stop smart-trader-x-postgresca 
+# 1. Stop the container: docker stop smart-trader-x-postgres 
